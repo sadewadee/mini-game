@@ -21,10 +21,16 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Environment variables must be present at build time for Next.js to bake them in?
-# Usually, for public envs (NEXT_PUBLIC_...), they are inlined at build time.
-# Dokploy allows adding build args or envs. We will trust environment variables usage.
+# Environment variables must be present at build time for Next.js to bake them in
 ENV NEXT_TELEMETRY_DISABLED 1
+
+# Accept build arguments (from Dokploy/CI)
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Make them available during build
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 RUN npm run build
 
