@@ -1,26 +1,76 @@
+
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-arcade-black: #1a1c2c;
+  --color-arcade-purple: #2b0057;
+  --color-arcade-pink: #ff004d;
+  --color-arcade-green: #00e436;
+  --color-arcade-cyan: #29adff;
+  --color-arcade-yellow: #ffec27;
+  --color-arcade-white: #fff1e8;
+  --color-arcade-gray: #5f574f;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-press-start: "Press Start 2P", system-ui, sans-serif;
+  --font-vt323: "VT323", monospace;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --animate-scanline: scanline 8s linear infinite;
+  --animate-flicker: flicker 0.15s infinite;
+
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  @keyframes flicker {
+    0% { opacity: 0.95; }
+    50% { opacity: 1; }
+    100% { opacity: 0.9; }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  background-color: var(--color-arcade-black);
+  color: var(--color-arcade-white);
+  font-family: var(--font-vt323);
+  overflow-x: hidden;
+}
+
+@font-face {
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff2) format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/vt323/v17/pxiKyp0a45v7flQE.woff2) format('woff2');
+  font-display: swap;
+}
+
+/* Custom Utilities that might be hard in pure Tailwind variable mapping */
+.crt-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.06),
+    rgba(0, 255, 0, 0.02),
+    rgba(0, 0, 255, 0.06)
+  );
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+.text-shadow-retro {
+  text-shadow: 2px 2px 0px var(--color-arcade-purple);
+}
+
+.box-shadow-retro {
+  box-shadow: 4px 4px 0px var(--color-arcade-purple);
 }
