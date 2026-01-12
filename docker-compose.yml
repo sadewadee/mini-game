@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  dokploy-network:
+    external: true
+
 services:
   web:
     container_name: pernganuan-games
@@ -7,14 +11,14 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # Pass Dokploy/System Envs to Docker Build Args
         NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     restart: always
-    ports:
-      - "3000:3000"
+    networks:
+      - dokploy-network
+    expose:
+      - "3000"
     environment:
-      # Also available at runtime (though Next.js bakes PUBLIC ones in)
       NODE_ENV: production
       NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
