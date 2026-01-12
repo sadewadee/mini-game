@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  web:
+    container_name: pernganuan-games
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      # Explicit overrides if needed, otherwise reads from .env.local
+      - NODE_ENV=production

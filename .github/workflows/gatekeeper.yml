@@ -1,0 +1,63 @@
+
+name: Pernganuan Gatekeeper 🛡️
+
+on:
+  pull_request:
+    paths:
+      - 'games/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Check for Shadow Dependencies
+        run: |
+          # Pernganuan Rule: Zero Dependencies
+          # Fail if package.json or lockfile is changed in this PR
+          if git diff --name-only origin/main HEAD | grep -qE 'package(-lock)?\.json'; then
+            echo "❌ ERROR: MODIFICATION OF PACKAGE.JSON DETECTED!"
+            echo "We assume 'Zero Dependencies' policy for game submissions."
+            echo "Please use existing libraries (Tone.js, Standard Utils) instead of adding new ones."
+            exit 1
+          else
+            echo "✅ Dependency Check Passed"
+          fi
+
+      - name: 👮 Asset Cop (No Static Files)
+        run: |
+          # Pernganuan Rule: Procedural Over Static
+          # Find any binary assets in the games folder
+          FORBIDDEN_FILES=$(find games -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.mp3" -o -name "*.wav" \))
+
+          if [ -n "$FORBIDDEN_FILES" ]; then
+            echo "❌ ERROR: STATIC ASSETS DETECTED!"
+            echo "The following files are not allowed:"
+            echo "$FORBIDDEN_FILES"
+            echo "-----------------------------------"
+            echo "Please remove them and use procedural drawing (ctx.fillRect) and synthesized audio (playSfx)."
+            exit 1
+          else
+            echo "✅ Asset Check Passed"
+          fi
+
+      - name: 🔍 Type Patrol (No Explicit Any)
+        run: |
+          # Pernganuan Rule: Strict Typing
+          # Grep for ': any' or 'as any' in the games directory
+          # We exclude this check script itself just in case
+
+          if grep -rE ": any|as any" games/ --include="*.ts"; then
+            echo "❌ ERROR: VISIBLE 'ANY' USAGE DETECTED!"
+            echo "We enforce strict typing to keep the engine stable."
+            echo "Please define proper interfaces for your entities."
+            exit 1
+          else
+            echo "✅ Type Check Passed"
+          fi

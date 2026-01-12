@@ -9,6 +9,7 @@ import { getGame } from '@/games/registry';
 import { GameInstance } from '@/games/types';
 import { supabase } from '@/lib/supabase';
 import { Leaderboard } from '@/components/Leaderboard';
+import { MobileControls } from '@/components/MobileControls';
 
 export default function GameRunnerPage({ params }: { params: Promise<{ gameId: string }> }) {
     const router = useRouter();
@@ -40,7 +41,11 @@ export default function GameRunnerPage({ params }: { params: Promise<{ gameId: s
                 game_id: gameId,
                 score: finalScore
             });
-            if (error) console.error("Supabase Error:", error);
+            if (error) {
+                console.error("Supabase Error Details:", JSON.stringify(error, null, 2));
+                console.error("Supabase Message:", error.message);
+                console.error("Supabase Hints:", error.hint);
+            }
             setSubmitStatus('DONE');
         } catch (e) {
             console.error(e);
@@ -175,12 +180,15 @@ export default function GameRunnerPage({ params }: { params: Promise<{ gameId: s
                 </div>
             </div>
 
-            <PixelCard variant="screen" className="relative p-0 border-8 border-arcade-gray rounded-xl shadow-2xl">
+            <PixelCard variant="screen" className="relative p-0 border-8 border-arcade-gray rounded-xl shadow-2xl overflow-hidden">
                 <canvas
                     ref={canvasRef}
                     onClick={handleInput}
-                    className="block w-full h-full cursor-pointer max-h-[70vh] bg-black"
+                    className="block w-full h-full cursor-pointer max-h-[70vh] bg-black touch-none select-none"
+                    style={{ touchAction: 'none' }} // Crucial for preventing scrolling
                 />
+
+                <MobileControls />
 
                 {/* HUD Layer (React) */}
                 <div className="absolute top-8 left-0 right-0 text-center pointer-events-none z-20">
